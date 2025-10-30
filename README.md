@@ -21,6 +21,8 @@ Det här programet låter en spelare spela sänka skepp mot ett randomiserat spe
         1.Avslutar programmet.
 
 ###Datastrukturer###
+Varje ruta i programmet kommer att vara objekt av en klass Square. Square kommer hålla koll på om rutan inehåller ett ship och om spelaren har skjutits på av spelaren. Rutorna kommer sedan att ingå i en spelplan av klassen Board där de lagras i en 2D-matris.
+###Klasser###
 klass Square()
     Attribut:
         self.ship(bool)
@@ -30,6 +32,8 @@ klass Square()
         __str__(self)
             if self.ship and self.hit
                 return X
+            elif self.ship and not self.hidden
+                return #
             elif self.ship and self.hidden
                 return " "
             elif self.hit
@@ -48,11 +52,46 @@ klass Board()
             skapar en 2D-lista som innehåller squares
         analyze_hits
             kollar statusen på alla rutor i brädet och returnerar en träffprocent=float och en victory = bool
-        place_ships(self, amount, max_size,)
-            Placerar ut ett skepp itaget i en loop kontrollerar så att skeppet inte placeras på en ruta där det redan finns ett skepp
+        place_ship(self, ship_size, origin)
+            Placerar ut ett skepp av storleken ship_size som utgår ifrån origin och breder ut sig åt vänster. Returnerar succes(bool)
         clear_board
             sätter alla värden i alla rutor till false
         hide_ships
             sätter alla ships som gömmda
         un_hide_ships
+            avmarkerar alla ships som gömda
+        __str__
+            ger en strängrepresentation av hela spelplanen 
 
+###Funktioner###
+pick_random_file()
+    Väljer en random fil för positioner på skeppen
+
+load_possitions_from_fromfile("exempelfil")
+    läser in positioner från filen och returnerar en lista ship_cordinate_list med kordinater
+    for every cordinate i ship_cordinate_list
+        board.place_ship(cordinate)
+
+game_menue()
+    presenterar användaren med en meny och skickar användaren till respektive funktion. Loopar under speletsgång. 
+
+shoot()
+    hide_ships
+    while true
+        print(board)
+        välj kordinat
+        kontrolera giltigt skott
+        registrera skott
+        fortsätt skjuta eller återvänd?
+
+sneak_peak()
+    show_ships
+    print(board)
+    tryck enter för att återvända
+
+victory()
+    printa ut: grattis du vann
+    print(träffprocent)
+    vill du generera ett nytt spel eller avsluta
+
+    
