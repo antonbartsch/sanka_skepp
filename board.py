@@ -38,6 +38,17 @@ class Board:
         """ initiera spelplanen"""
         self.squares = []
 
+    def __getitem__ (self, index):
+        """ hämta värdet från angiven ruta på spelplanen
+
+        Argument:
+            index (tuple): ett sammansatt värde med rad och kolumn för rutan
+        Returnerar:
+            Square: rutan på angiven position
+        """
+        row, col = index
+        return self.squares[row][col]
+    
     def generate_board (self, HEIGHT, WIDTH):
         """ generera en 2D-lista av Square-objekt baserat på angivna dimensioner 
         
@@ -77,7 +88,7 @@ class Board:
             hit_percentage = 0.0
         else:
             hit_percentage = total_hit_ship_squares / total_ship_squares*100
-        if total_hit_ship_squares == total_ship_squares
+        if total_hit_ship_squares == total_ship_squares:
             victory = True
         else:
             victory = False
@@ -121,7 +132,15 @@ def test():
     board = Board()
     board.generate_board(5, 5)
     print(board)
-    board.test_square_values()
-
+    board[1,1].ship = True
+    board[1,1].hit = True
+    board[1,2].ship = True
+    board[1,2].hit = True
+    board[4,1].ship = True
+    board[4,1].hit = True
+    board[2,0].ship = True
+    board[2,1].hit = True
+    board[3,4].ship = True
+    print(board)
 if __name__ == "__main__":
     test()
