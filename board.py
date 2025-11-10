@@ -87,12 +87,33 @@ class Board:
         if total_ship_squares == 0:
             hit_percentage = 0.0
         else:
-            hit_percentage = total_hit_ship_squares / total_ship_squares*100
+            hit_percentage = total_hit_ship_squares / total_hit_squares*100
+            hit_percentage=round(hit_percentage, 2)
         if total_hit_ship_squares == total_ship_squares:
             victory = True
         else:
             victory = False
         return hit_percentage, victory
+    
+    def clear_board(self):
+        """ Återställ värdena på brädet"""
+        for row in self.squares:
+            for square in row:
+                square.ship = False
+                square.hit = False
+                square.hidden = False
+
+    def hide_ships(self):
+        """Göm alla skepp"""
+        for row in self.squares:
+            for square in row:
+                square.hidden = True
+
+    def show_ships(self):
+        """Visa alla skepp"""
+        for row in self.squares:
+            for square in row:
+                square.hidden = False
 
     def __str__(self):
         """ returnera en strängrepresentation av spelplanen 
@@ -139,8 +160,18 @@ def test():
     board[4,1].ship = True
     board[4,1].hit = True
     board[2,0].ship = True
+    board[2,0].hit = True
     board[2,1].hit = True
     board[3,4].ship = True
+    print(board)
+    hit_percentage, victory = board.analyze_hits()
+    print(f"Hit percentage: {hit_percentage}%")
+    print(f"Victory: {victory}")
+    board.hide_ships()
+    print(board)
+    board.show_ships()
+    print(board)
+    board.clear_board()
     print(board)
 if __name__ == "__main__":
     test()
