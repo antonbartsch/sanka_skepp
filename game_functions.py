@@ -1,10 +1,15 @@
 """ Modul som hanterar de logiska funktionerna i spelet"""
 import random
 
-def safe_input():
+def safe_input(input):
     #todo: skapa safe_input funktion
     return input
-
+def coordinate_input():
+    #todo: skapa coordinate_input funktion
+    return input
+def victory(hit_percentage):
+    #todo: skapa victory funktion
+    print("Grattis! Du har vunnit spelet!")
 
 def load_position_from_file(file_list):
     """ Ladda skeppspositioner från en fil
@@ -66,6 +71,36 @@ def validate_shot_input(shot_input, board):
         return not board[shot_input].hit
     except IndexError:
         return False
+
+def shoot(board):
+    """ Hantera beskjutning av spelplanen
+
+    Argument:
+        board (Board): spelplanen som ska beskjutas
+    """
+    shoot_menu_active = True
+    while shoot_menu_active:
+        print("### SPELPLAN ###")
+        print(board)
+        print('Ange koordinater för beskjutning "x,y:":')
+        matrix_position = coordinate_input()
+        if validate_shot_input(matrix_position, board):
+            board[matrix_position].hit = True
+            victory, hitpercentage = board.analyze_hits()
+            if victory:
+                victory(hitpercentage)
+            if board[matrix_position].ship:
+                print("Träff!")
+            else:
+                print("Miss!")
+            print(f"träffsäkerhet: {hitpercentage}%")
+        else:
+            print("Ogiltig inmatning, rutan är redan träffad eller utanför spelplanen")
+        print("Vill du skjuta igen? (j/n):")
+        user_choice = safe_input()
+        if user_choice != 'j':
+            shoot_menu_active = False
+
 
 def test():
     """ Testfunktion för game_functions"""
