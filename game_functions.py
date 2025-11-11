@@ -4,12 +4,29 @@ import random
 def safe_input(input):
     #todo: skapa safe_input funktion
     return input
+
+
 def coordinate_input():
-    #todo: skapa coordinate_input funktion
-    return input
+    """ Hantera användarinmatning av koordinater 
+
+    Argument:
+        input (str): användarens inmatning i formatet "x,y"
+    returns:
+        matrix_position (tuple): positionen som matrisindex (rad, kolumn)
+    """
+    while True:
+        try:
+
+            x_str, y_str = input().split(',')
+            x = int(x_str) -1
+            y = int(y_str) -1
+            return (y, x) # Returnerar som matrisposition (rad, kolumn)
+        except (ValueError, IndexError):
+            print("Ogiltig inmatning. Ange koordinater i formatet x,y där x och y är heltal.")
+            print('Försök igen: ', end='')
 def victory(hit_percentage):
     #todo: skapa victory funktion
-    print("Grattis! Du har vunnit spelet!")
+    print(f"Grattis! Du har vunnit spelet! träffprocent: {hit_percentage}%")
 
 def load_position_from_file(file_list):
     """ Ladda skeppspositioner från en fil
@@ -82,22 +99,22 @@ def shoot(board):
     while shoot_menu_active:
         print("### SPELPLAN ###")
         print(board)
-        print('Ange koordinater för beskjutning "x,y:":')
+        print('Ange koordinater för beskjutning "x,y:":', end='')
         matrix_position = coordinate_input()
         if validate_shot_input(matrix_position, board):
             board[matrix_position].hit = True
-            victory, hitpercentage = board.analyze_hits()
+            hit_percentage, victory = board.analyze_hits()
             if victory:
-                victory(hitpercentage)
+                victory(hit_percentage)
             if board[matrix_position].ship:
                 print("Träff!")
             else:
                 print("Miss!")
-            print(f"träffsäkerhet: {hitpercentage}%")
+            print(f"träffsäkerhet: {hit_percentage}%")
         else:
             print("Ogiltig inmatning, rutan är redan träffad eller utanför spelplanen")
         print("Vill du skjuta igen? (j/n):")
-        user_choice = safe_input()
+        user_choice = safe_input(input())
         if user_choice != 'j':
             shoot_menu_active = False
 
@@ -114,6 +131,7 @@ def test():
     for pos in positions:
         board[pos].ship = True
     print(board)
+    shoot(board)
 
 
 if __name__ == "__main__":
