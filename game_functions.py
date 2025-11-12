@@ -1,9 +1,29 @@
 """ Modul som hanterar de logiska funktionerna i spelet"""
 import random
 
-def safe_input(input):
-    #todo: skapa safe_input funktion
-    return input
+def safe_input(user_input, type, max_value=None):
+    """ Hantera inmatning av korrekt typ och format
+    Argument:
+        input (str): användarens inmatning
+        type (type): förväntad typ av inmatning
+        max_value (int): högsta tillåtna värde för heltal (behövs endast för int)
+
+    Returnerar:
+        input (type): den validerade inmatningen av förväntad typ
+    """
+    while True:
+        if type == int:
+            try:
+                return int(user_input)
+            except ValueError:
+                print(f"input måste vara ett heltal mellan 1 och {max_value} ")
+        elif type == str:
+            user_input = user_input.lower()
+            if len(user_input) == 1 and (user_input == 'j' or user_input == 'n'):
+                return user_input
+            else: 
+                print("input måste vara 'j' eller 'n'")
+        user_input = input("Försök igen:")
 
 
 def coordinate_input():
@@ -24,6 +44,7 @@ def coordinate_input():
         except (ValueError, IndexError):
             print("Ogiltig inmatning. Ange koordinater i formatet x,y där x och y är heltal.")
             print('Försök igen: ', end='')
+
 def victory(hit_percentage):
     #todo: skapa victory funktion
     print(f"Grattis! Du har vunnit spelet! träffprocent: {hit_percentage}%")
@@ -55,7 +76,7 @@ def start_menu():
         print("3. Avsluta")
         #todo: implementera motagning av användarval
 
-def game_menu():
+def game_menu(board):
     """ Visa spelmenyn och dirigera användaren till vald funktion """
     game_running = True
     while game_running:
@@ -63,14 +84,14 @@ def game_menu():
         print("1. Beskjut skepp")
         print("2. Tjuvkika på spelplanen")
         print("3. Avsluta spelet")
-        choice = safe_input()
-        if choice == '1':
+        choice = safe_input(input("Välj ett alternativ (1-3): "), int, 3)
+        if choice == 1:
             print("Beskjuter skepp...")
-            #todo: implementera beskjutningsfunktion
-        elif choice == '2':
+            shoot(board)
+        elif choice == 2:
             print("Tjuvkikar på spelplanen...")
             #todo: implementera tjuvkikningsfunktion
-        elif choice == '3':
+        elif choice == 3:
             print("Avslutar spelet...")
             game_running = False
 
@@ -114,7 +135,7 @@ def shoot(board):
         else:
             print("Ogiltig inmatning, rutan är redan träffad eller utanför spelplanen")
         print("Vill du skjuta igen? (j/n):")
-        user_choice = safe_input(input())
+        user_choice = safe_input(input(), str)
         if user_choice != 'j':
             shoot_menu_active = False
 
@@ -131,7 +152,7 @@ def test():
     for pos in positions:
         board[pos].ship = True
     print(board)
-    shoot(board)
+    game_menu(board)
 
 
 if __name__ == "__main__":
