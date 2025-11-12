@@ -66,7 +66,7 @@ def load_position_from_file(file_list):
             positions_list.append((int(x), int(y)))
     return positions_list
 
-def start_menu():
+def start_menu(board):
     """ Visa startmenyn och dirigera användaren till vald funktion """
     game_running = True
     while game_running:
@@ -74,7 +74,8 @@ def start_menu():
         print("1. Starta nytt spel")
         print("2. Regler")
         print("3. Avsluta")
-        #todo: implementera motagning av användarval
+        choice = safe_input(input("Välj ett alternativ (1-3): "), int, 3)
+        return choice
 
 def game_menu(board):
     """ Visa spelmenyn och dirigera användaren till vald funktion """
@@ -83,14 +84,14 @@ def game_menu(board):
         print("--- MENY ---")
         print("1. Beskjut skepp")
         print("2. Tjuvkika på spelplanen")
-        print("3. Avsluta spelet")
+        print("3. Avsluta till huvudmenyn")
         choice = safe_input(input("Välj ett alternativ (1-3): "), int, 3)
         if choice == 1:
             print("Beskjuter skepp...")
             shoot(board)
         elif choice == 2:
             print("Tjuvkikar på spelplanen...")
-            #todo: implementera tjuvkikningsfunktion
+            view_board(board)
         elif choice == 3:
             print("Avslutar spelet...")
             game_running = False
@@ -139,6 +140,16 @@ def shoot(board):
         if user_choice != 'j':
             shoot_menu_active = False
 
+def view_board(board):
+    """ Visa spelplanen för tjuvkikning
+
+    Argument:
+        board (Board): spelplanen som ska visas
+    """
+    board.show_ships()
+    print("### SPELPLAN ###")
+    print(board)
+    input("Tryck på Enter för att återgå till menyn...")
 
 def test():
     """ Testfunktion för game_functions"""
