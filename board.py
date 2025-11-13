@@ -90,10 +90,10 @@ class Board:
             hit_percentage = total_hit_ship_squares / total_hit_squares*100
             hit_percentage=round(hit_percentage, 2)
         if total_hit_ship_squares == total_ship_squares:
-            victory = True
+            is_victory = True
         else:
-            victory = False
-        return hit_percentage, victory
+            is_victory = False
+        return hit_percentage, is_victory
     
     def clear_board(self):
         """ Återställ värdena på brädet"""
@@ -122,12 +122,36 @@ class Board:
             board_str (str): strängrepresentation av spelplanen
         """
         board_str = ""
+        board_str += self.string_top_rows()
         for row in self.squares:
+            board_str +="——"*(len(self.squares[0])+2)+"\n"
+            board_str += f"|{self.squares.index(row)+1}|#|"
             for square in row:
-                board_str += str(square)
+                board_str += str(square)+"|"
             board_str += "\n"
+        board_str +="——"*(len(self.squares[0])+2)+"\n"
         return board_str
     
+    def string_top_rows(self):
+        """ returnera en strängrepresentation av de två översta raderna som kordinatsystemet
+        
+        Returnerar:
+            top_rows_str (str): strängrepresentation av de två översta raderna
+        """
+        top_row_str =""
+        for col in range(len(self.squares[0])+2):
+            top_row_str +="__"
+        top_row_str +="\n| |X|"
+        for col in range(len(self.squares[0])):
+            top_row_str += str(col+1)+"|"
+        top_row_str +="\n|Y|"
+        for col in range(len(self.squares[0])+1):
+            top_row_str +="#|"
+        top_row_str +="\n"
+        return top_row_str
+
+
+
     def test_square_values(self):
         """ testfunktion för att skriva ut olika attributvärden för varje ruta på spelplanen """
         for row in self.squares:
