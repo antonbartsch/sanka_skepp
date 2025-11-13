@@ -66,16 +66,18 @@ def load_position_from_file(file_list):
             positions_list.append((int(x), int(y)))
     return positions_list
 
-def start_menu(board):
-    """ Visa startmenyn och dirigera användaren till vald funktion """
-    game_running = True
-    while game_running:
-        print("=== VÄLKOMMEN TILL SÄNKA SKEPP ===")
-        print("1. Starta nytt spel")
-        print("2. Regler")
-        print("3. Avsluta")
-        choice = safe_input(input("Välj ett alternativ (1-3): "), int, 3)
-        return choice
+def start_menu():
+    """ Visa startmenyn och returnera användarens val 
+    
+    Returnerar:
+        choice (int): användarens val från menyn
+    """
+    print("=== VÄLKOMMEN TILL SÄNKA SKEPP ===")
+    print("1. Starta nytt spel")
+    print("2. Regler")
+    print("3. Avsluta")
+    choice = safe_input(input("Välj ett alternativ (1-3): "), int, 3)
+    return choice
 
 def game_menu(board):
     """ Visa spelmenyn och dirigera användaren till vald funktion """
@@ -88,7 +90,7 @@ def game_menu(board):
         choice = safe_input(input("Välj ett alternativ (1-3): "), int, 3)
         if choice == 1:
             print("Beskjuter skepp...")
-            shoot(board)
+            game_running = shoot(board)
         elif choice == 2:
             print("Tjuvkikar på spelplanen...")
             view_board(board)
@@ -117,6 +119,7 @@ def shoot(board):
     Argument:
         board (Board): spelplanen som ska beskjutas
     """
+    board.hide_ships()
     shoot_menu_active = True
     while shoot_menu_active:
         print("### SPELPLAN ###")
@@ -125,9 +128,10 @@ def shoot(board):
         matrix_position = coordinate_input()
         if validate_shot_input(matrix_position, board):
             board[matrix_position].hit = True
-            hit_percentage, victory = board.analyze_hits()
-            if victory:
+            hit_percentage, is_victory = board.analyze_hits()
+            if is_victory:
                 victory(hit_percentage)
+                return False
             if board[matrix_position].ship:
                 print("Träff!")
             else:
@@ -139,6 +143,7 @@ def shoot(board):
         user_choice = safe_input(input(), str)
         if user_choice != 'j':
             shoot_menu_active = False
+    return True
 
 def view_board(board):
     """ Visa spelplanen för tjuvkikning
@@ -150,6 +155,10 @@ def view_board(board):
     print("### SPELPLAN ###")
     print(board)
     input("Tryck på Enter för att återgå till menyn...")
+
+def print_rules():
+    #todo: skapa print_rules funktion
+    return print("regler:")
 
 def test():
     """ Testfunktion för game_functions"""
