@@ -1,4 +1,5 @@
 """ modul som hanterar klasserna Square och Board """
+import random
 
 class Square:
     """ representerar en ruta på spelplanen
@@ -150,8 +151,6 @@ class Board:
         top_row_str +="\n"
         return top_row_str
 
-
-
     def test_square_values(self):
         """ testfunktion för att skriva ut olika attributvärden för varje ruta på spelplanen """
         for row in self.squares:
@@ -172,6 +171,58 @@ class Board:
                 square.hit=False
                 square.hidden=False
         print(self)
+
+class Ship:
+    """ Representerar ett skepp på spelplanen
+
+    Atribut:
+    size (int): Storleken på skeppet
+    rotation (str): Riktningen på skeppet, 'H' för horisontell, 'V' för vertikal
+    ship_squares (list): Lista med kordinater för rutorna som skeppet ligger på
+    """
+    def __init__(self):
+        """ initiera ett tomt skepp"""
+        #self.size = None
+        #self.rotation = None
+        self.ship_squares = []
+        self.ship_blocked_squares = []
+
+    def is_sunk(self, board):
+        """ kontrolera om skeppet är sänkt
+
+        Argument:
+            board (Board): spelplanen där skeppet finns
+        """
+        ship_sunk = True
+        for square in self.ship_squares:
+            if not board[square].hit:
+                ship_sunk = False
+        if ship_sunk:
+            for square in self.ship_squares:
+                try:
+                    board[square].hit = True
+                except IndexError:
+                    pass
+
+    def generate_ship(self, size, board):
+        """ generera ett skepp baserat på storlek
+
+        Argument:
+            size (int): storleken på skeppet
+        """
+        start_x = random.randint(0, len(board.squares[0])-1) #-1 för att index börjar på 0
+        start_y = random.randint(0, len(board.squares)-1)
+        rotation = random.choice(['H', 'V'])
+        self.ship_squares =[(start_x, start_y)]
+        if rotation == 'H':
+            for i in range(1, size):
+                self.ship_squares.append((start_x + i, start_y))
+        elif rotation == 'V':
+            for i in range(1, size):
+                self.ship_squares.append((start_x, start_y + i))
+
+
+            
 def test():
     """ testfunktion för att skapa och skriva ut en spelplan """
     board = Board()
