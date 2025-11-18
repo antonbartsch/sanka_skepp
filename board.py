@@ -15,6 +15,7 @@ class Square:
         self.ship = False
         self.hit = False
         self.hidden = False
+        self.blocked = False
 
     def __str__(self):
         """ returnera en strängrepresentation av rutan baserat på dess tillstånd """
@@ -38,6 +39,7 @@ class Board:
     def __init__ (self):
         """ initiera spelplanen"""
         self.squares = []
+        self.ships = []
 
     def __getitem__ (self, index):
         """ hämta värdet från angiven ruta på spelplanen
@@ -204,49 +206,95 @@ class Ship:
                 except IndexError:
                     pass
 
+    def place_ship(self, board, square):
+        """ placera skeppet på spelplanen
+
+        Argument:
+            board (Board): spelplanen där skeppet ska placeras
+            square (tuple): kordinaterna för rutan där skeppet ska placeras
+        """
+        
+
     def generate_ship(self, size, board):
         """ generera ett skepp baserat på storlek
 
         Argument:
             size (int): storleken på skeppet
+        Returnerar:
+            ship (ship): det genererade skeppet
         """
-        start_x = random.randint(0, len(board.squares[0])-1) #-1 för att index börjar på 0
-        start_y = random.randint(0, len(board.squares)-1)
-        rotation = random.choice(['H', 'V'])
-        self.ship_squares =[(start_x, start_y)]
-        if rotation == 'H':
-            for i in range(1, size):
-                self.ship_squares.append((start_x + i, start_y))
-        elif rotation == 'V':
-            for i in range(1, size):
-                self.ship_squares.append((start_x, start_y + i))
 
+        ship_checked = False
+        while not ship_checked:
+            start_x = random.randint(0, len(board.squares[0])-1) #-1 för att index börjar på 0
+            start_y = random.randint(0, len(board.squares)-1)
+            rotation = random.choice(['H', 'V'])
+            for i in range(size+1):#+1 för att bryta loopen ibörjan av varvet efter sista rutan
+                if i == size:
+                    ship_checked = True
+                    break
+                if rotation == 'H':
+                    try:
+                        if board[(start_y, start_x + i)].ship or board[(start_y, start_x + i)].blocked:
+                            break
+                    except IndexError:
+                        break
+                elif rotation == 'V':
+                    try:
+                        if board[(start_y + i, start_x)].ship or board[(start_y + i, start_x)].blocked:
+                            break
+                    except IndexError:
+                        break
+        ship = Ship()
+        for i in range(size):
+            if rotation == 'H':
+                board.squares[start_y][start_x + i].ship = True
+                ship.ship_squares.append((start_y, start_x + i))
+                try:
+                    board[(start_y - 1,start_x + i)].blocked = True
+                    board[(start_y + 1,start_x + i)].blocked = True
+                    board[(start_y,start_x + i - 1)].blocked = True
+                    board[(start_y,start_x + i + 1)].blocked = True
+                    ship.ship_blocked_squares.append((start_y - 1, start_x + i))
+                    ship.ship_blocked_squares.append((start_y + 1, start_x + i))
+                    ship.ship_blocked_squares.append((start_y, start_x + i - 1))
+                    ship.ship_blocked_squares.append((start_y, start_x + i + 1))
+                except IndexError:
+                    pass
+            elif rotation == 'V':
+                board.squares[start_y + i][start_x].ship = True
+                ship.ship_squares.append((start_y + i, start_x))
+                try:
+                    board[(start_y + i, start_x - 1)].blocked = True
+                    board[(start_y + i, start_x + 1)].blocked = True
+                    board[(start_y + i - 1, start_x)].blocked = True
+                    board[(start_y + i + 1, start_x)].blocked = True
+                    ship.ship_blocked_squares.append((start_y + i, start_x - 1))
+                    ship.ship_blocked_squares.append((start_y + i, start_x + 1))
+                    ship.ship_blocked_squares.append((start_y + i - 1, start_x))
+                    ship.ship_blocked_squares.append((start_y + i + 1, start_x))
+                except IndexError:
+                    pass
+        return ship
+            
 
             
 def test():
     """ testfunktion för att skapa och skriva ut en spelplan """
     board = Board()
-    board.generate_board(5, 5)
+    board.generate_board(9, 9)
     print(board)
-    board[1,1].ship = True
-    board[1,1].hit = True
-    board[1,2].ship = True
-    board[1,2].hit = True
-    board[4,1].ship = True
-    board[4,1].hit = True
-    board[2,0].ship = True
-    board[2,0].hit = True
-    board[2,1].hit = True
-    board[3,4].ship = True
+    ship = Ship()
+    ship.generate_ship(3, board)
     print(board)
-    hit_percentage, victory = board.analyze_hits()
-    print(f"Hit percentage: {hit_percentage}%")
-    print(f"Victory: {victory}")
-    board.hide_ships()
+    ship.generate_ship(7, board)
     print(board)
-    board.show_ships()
+    ship.generate_ship(4, board)
     print(board)
-    board.clear_board()
+    ship.generate_ship(2, board)
     print(board)
+    ship.generate_ship(5, board)
+    print(board)
+    ship.generate_ship(10, board)
 if __name__ == "__main__":
     test()
