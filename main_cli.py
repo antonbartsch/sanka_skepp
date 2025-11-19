@@ -1,8 +1,8 @@
 """Huvudfil för konsolapplikationen"""
 from game_functions import *
 from board import *
-HEIGHT = 5
-WIDTH = 5
+HEIGHT = 6
+WIDTH = 7
 
 def main():
     """ Huvudfunktion för konsolapplikationen"""
@@ -12,9 +12,8 @@ def main():
         if choice == 1:
             board = Board()
             board.generate_board(HEIGHT, WIDTH)
-            positions = load_position_from_file(['position_list1.txt', 'position_list2.txt'])
-            for pos in positions:
-                board[pos].ship = True
+            board.generate_ship(2, board)
+            board.generate_ship(3, board)
             game_menu(board)
         elif choice == 2:
             print_rules()

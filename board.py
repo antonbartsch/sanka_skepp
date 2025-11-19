@@ -50,6 +50,8 @@ class Board:
             Square: rutan på angiven position
         """
         row, col = index
+        if row < 0 or col < 0:
+            raise IndexError
         return self.squares[row][col]
     
     def generate_board (self, HEIGHT, WIDTH):
@@ -69,6 +71,7 @@ class Board:
     def analyze_hits (self):
         """
         analysera träffar på spelplanen och returnera träffprocent och om speler är vunnet
+        markera också rutorna runt sänkta skepp som träffade
 
         Returnerar:
             hit_percentage (float): procentandel träffar på skepp
@@ -87,6 +90,14 @@ class Board:
                 if square.hit:
                     total_hit_squares += 1
         
+        for ship in self.ships:
+            if ship.is_sunk(self):
+                for square in ship.blocked_squares:
+                   # try:
+                    self[square].hit = True
+                    #except IndexError:
+                       # pass
+
         if total_ship_squares == 0:
             hit_percentage = 0.0
         else:
@@ -210,33 +221,35 @@ class Board:
         ship = Ship()
         for i in range(size):
             if rotation == 'H':
-                board.squares[start_y][start_x + i].ship = True
+                board[(start_y, start_x + i)].ship = True
                 ship.ship_squares.append((start_y, start_x + i))
                 try:
                     board[(start_y - 1,start_x + i)].blocked = True
                     board[(start_y + 1,start_x + i)].blocked = True
                     board[(start_y,start_x + i - 1)].blocked = True
                     board[(start_y,start_x + i + 1)].blocked = True
-                    ship.ship_blocked_squares.append((start_y - 1, start_x + i))
-                    ship.ship_blocked_squares.append((start_y + 1, start_x + i))
-                    ship.ship_blocked_squares.append((start_y, start_x + i - 1))
-                    ship.ship_blocked_squares.append((start_y, start_x + i + 1))
+                    ship.blocked_squares.append((start_y - 1, start_x + i))
+                    ship.blocked_squares.append((start_y + 1, start_x + i))
+                    ship.blocked_squares.append((start_y, start_x + i - 1))
+                    ship.blocked_squares.append((start_y, start_x + i + 1))
                 except IndexError:
                     pass
             elif rotation == 'V':
-                board.squares[start_y + i][start_x].ship = True
+                board[(start_y + i, start_x)].ship = True
                 ship.ship_squares.append((start_y + i, start_x))
                 try:
                     board[(start_y + i, start_x - 1)].blocked = True
                     board[(start_y + i, start_x + 1)].blocked = True
                     board[(start_y + i - 1, start_x)].blocked = True
                     board[(start_y + i + 1, start_x)].blocked = True
-                    ship.ship_blocked_squares.append((start_y + i, start_x - 1))
-                    ship.ship_blocked_squares.append((start_y + i, start_x + 1))
-                    ship.ship_blocked_squares.append((start_y + i - 1, start_x))
-                    ship.ship_blocked_squares.append((start_y + i + 1, start_x))
+                    ship.blocked_squares.append((start_y + i, start_x - 1))
+                    ship.blocked_squares.append((start_y + i, start_x + 1))
+                    ship.blocked_squares.append((start_y + i - 1, start_x))
+                    ship.blocked_squares.append((start_y + i + 1, start_x))
                 except IndexError:
                     pass
+            self.ships.append(ship)
+        
 
 
 class Ship:
@@ -252,36 +265,21 @@ class Ship:
         #self.size = None
         #self.rotation = None
         self.ship_squares = []
-        self.ship_blocked_squares = []
+        self.blocked_squares = []
 
     def is_sunk(self, board):
         """ kontrolera om skeppet är sänkt
 
         Argument:
             board (Board): spelplanen där skeppet finns
+        Returnerar:
+            ship_sunk (bool): True om skeppet är sänkt annars False
         """
         ship_sunk = True
         for square in self.ship_squares:
             if not board[square].hit:
                 ship_sunk = False
-        if ship_sunk:
-            for square in self.ship_squares:
-                try:
-                    board[square].hit = True
-                except IndexError:
-                    pass
-
-    def place_ship(self, board, square):
-        """ placera skeppet på spelplanen
-
-        Argument:
-            board (Board): spelplanen där skeppet ska placeras
-            square (tuple): kordinaterna för rutan där skeppet ska placeras
-        """
-        
-
-            
-
+        return ship_sunk
             
 def test():
     """ testfunktion för att skapa och skriva ut en spelplan """
@@ -298,5 +296,6 @@ def test():
     print(board)
     board.generate_ship(5, board)
     print(board)
+  
 if __name__ == "__main__":
     test()
