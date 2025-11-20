@@ -97,6 +97,8 @@ class Board:
                     self[square].hit = True
                     #except IndexError:
                        # pass
+                self.ships.remove(ship)
+                print("Ett skepp har sänkts!") #todo flytta till nått rimligt ställe
 
         if total_ship_squares == 0:
             hit_percentage = 0.0
@@ -185,6 +187,19 @@ class Board:
                 square.hidden=False
         print(self)
 
+    def safe_block(self, index, ship):
+        """ markera rutan som blockerad om den finns
+
+        Argument:
+            index (tuple): ett sammansatt värde med rad och kolumn för rutan
+            ship (ship): skeppet som rutan ska blockeras för
+        """
+        try:
+            self[index].blocked = True
+            ship.blocked_squares.append(index)
+        except IndexError:
+            pass
+
     def generate_ship(self, size, board):
         """ generera ett skepp baserat på storlek
 
@@ -223,32 +238,18 @@ class Board:
             if rotation == 'H':
                 board[(start_y, start_x + i)].ship = True
                 ship.ship_squares.append((start_y, start_x + i))
-                try:
-                    board[(start_y - 1,start_x + i)].blocked = True
-                    board[(start_y + 1,start_x + i)].blocked = True
-                    board[(start_y,start_x + i - 1)].blocked = True
-                    board[(start_y,start_x + i + 1)].blocked = True
-                    ship.blocked_squares.append((start_y - 1, start_x + i))
-                    ship.blocked_squares.append((start_y + 1, start_x + i))
-                    ship.blocked_squares.append((start_y, start_x + i - 1))
-                    ship.blocked_squares.append((start_y, start_x + i + 1))
-                except IndexError:
-                    pass
+                board.safe_block((start_y - 1, start_x + i), ship)
+                board.safe_block((start_y + 1, start_x + i), ship)
+                board.safe_block((start_y, start_x + i - 1), ship)
+                board.safe_block((start_y, start_x + i + 1), ship)
             elif rotation == 'V':
                 board[(start_y + i, start_x)].ship = True
                 ship.ship_squares.append((start_y + i, start_x))
-                try:
-                    board[(start_y + i, start_x - 1)].blocked = True
-                    board[(start_y + i, start_x + 1)].blocked = True
-                    board[(start_y + i - 1, start_x)].blocked = True
-                    board[(start_y + i + 1, start_x)].blocked = True
-                    ship.blocked_squares.append((start_y + i, start_x - 1))
-                    ship.blocked_squares.append((start_y + i, start_x + 1))
-                    ship.blocked_squares.append((start_y + i - 1, start_x))
-                    ship.blocked_squares.append((start_y + i + 1, start_x))
-                except IndexError:
-                    pass
-            self.ships.append(ship)
+                board.safe_block((start_y + i, start_x - 1), ship)
+                board.safe_block((start_y + i, start_x + 1), ship)
+                board.safe_block((start_y + i - 1, start_x), ship)
+                board.safe_block((start_y + i + 1, start_x), ship)
+        self.ships.append(ship)
         
 
 
