@@ -48,6 +48,9 @@ def coordinate_input():
 def victory(hit_percentage):
     #todo: skapa victory funktion
     print(f"Grattis! Du har vunnit spelet! träffprocent: {hit_percentage}%")
+    top_list = read_top_list()
+    save_score(hit_percentage, top_list)
+    print_top_list(top_list)
 
 def load_position_from_file(file_list):
     """ Ladda skeppspositioner från en fil
@@ -128,6 +131,7 @@ def shoot(board):
         matrix_position = coordinate_input()
         if validate_shot_input(matrix_position, board):
             board[matrix_position].hit = True
+            board.fired_shots += 1
             hit_percentage, is_victory = board.analyze_hits()
             if is_victory:
                 victory(hit_percentage)
@@ -159,6 +163,62 @@ def view_board(board):
 def print_rules():
     #todo: skapa print_rules funktion
     return print("regler:")
+
+def save_score(hit_percentage, top_list):
+    """ Spara spelarens poäng till en fil
+
+    Argument:
+        hit_percentage (float): spelarens träffprocent
+        top_list (list): lista med toppresultat
+    """
+    if len(top_list) < 10:
+        name = input(f"grattis du har placerat dig på topplistan! skriv in ditt namn: ")
+        your_player_score = [hit_percentage, name]
+        top_list.append(your_player_score)
+    i=0
+    for player_score in top_list:
+        i += 1
+        if hit_percentage > player_score[0]:
+            name = input(f"grattis du kom på plats {i} topplistan! skriv in ditt namn: ")
+            your_player_score = [hit_percentage, name]
+            top_list.insert(i-1, your_player_score)
+            if len(top_list) >10:
+                top_list.pop()
+            break
+    with open('top_list.txt', 'w') as file:
+        for player_score in top_list:
+            file.write(f"{player_score[1]},{player_score[0]}\n")
+            break
+
+def read_top_list():
+    """ Läs in toppresultat från en fil
+
+    Returnerar:
+        top_list (list): lista med toppresultat
+    """
+    top_list = []
+    try:
+        with open('top_list.txt', 'r') as file:
+            for line in file:
+                name, score = line.strip().split(',')
+                top_list.append([float(score), name])
+    except FileNotFoundError:
+        print("top_list.txt hittades inte")# för felsökning
+    return top_list
+
+def print_top_list(top_list):
+    """ Skriv ut toppresultat
+
+    Argument:
+        top_list (list): lista med toppresultat
+    """
+    print("=== TOPPLISTA ===")
+    if len(top_list) == 0:
+        print("Inga resultat sparade än (du har goda chanser)")
+    else:
+        for player_score in top_list:
+            print(f"{player_score[1]}: {player_score[0]}% träffsäkerhet")
+    print("=================")
 
 def test():
     """ Testfunktion för game_functions"""
