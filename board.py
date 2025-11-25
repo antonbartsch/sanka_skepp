@@ -35,11 +35,14 @@ class Board:
 
     Atribut:
     squares (list): 2D-lista av Square-objekt som representerar spelplanen
+    ships (list): lista av skepp på spelplanen
+    fired_shots (int): antal beskjutna rutor på spelplanen
     """
     def __init__ (self):
         """ initiera spelplanen"""
         self.squares = []
         self.ships = []
+        self.fired_shots = 0
 
     def __getitem__ (self, index):
         """ hämta värdet från angiven ruta på spelplanen
@@ -79,7 +82,6 @@ class Board:
         """
         total_ship_squares = 0
         total_hit_ship_squares = 0
-        total_hit_squares = 0
 
         for row in self.squares:
             for square in row:
@@ -87,8 +89,6 @@ class Board:
                     total_ship_squares += 1
                     if square.hit:
                         total_hit_ship_squares += 1
-                if square.hit:
-                    total_hit_squares += 1
         
         for ship in self.ships:
             if ship.is_sunk(self):
@@ -100,10 +100,10 @@ class Board:
                 self.ships.remove(ship)
                 print("Ett skepp har sänkts!") #todo flytta till nått rimligt ställe
 
-        if total_ship_squares == 0:
+        if total_hit_ship_squares == 0:
             hit_percentage = 0.0
         else:
-            hit_percentage = total_hit_ship_squares / total_hit_squares*100
+            hit_percentage = total_hit_ship_squares / self.fired_shots *100
             hit_percentage=round(hit_percentage, 2)
         if total_hit_ship_squares == total_ship_squares:
             is_victory = True
@@ -118,6 +118,7 @@ class Board:
                 square.ship = False
                 square.hit = False
                 square.hidden = False
+                self.fired_shots = 0
 
     def hide_ships(self):
         """Göm alla skepp"""
