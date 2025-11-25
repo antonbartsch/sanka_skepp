@@ -77,9 +77,10 @@ def start_menu():
     """
     print("=== VÄLKOMMEN TILL SÄNKA SKEPP ===")
     print("1. Starta nytt spel")
-    print("2. Regler")
-    print("3. Avsluta")
-    choice = safe_input(input("Välj ett alternativ (1-3): "), int, 3)
+    print("2. Topplista")
+    print("3. Regler")
+    print("4. Avsluta")
+    choice = safe_input(input("Välj ett alternativ (1-3): "), int, 4)
     return choice
 
 def game_menu(board):
@@ -171,7 +172,7 @@ def save_score(hit_percentage, top_list):
         hit_percentage (float): spelarens träffprocent
         top_list (list): lista med toppresultat
     """
-    if len(top_list) < 10:
+    if len(top_list) == 0:
         name = input(f"grattis du har placerat dig på topplistan! skriv in ditt namn: ")
         your_player_score = [hit_percentage, name]
         top_list.append(your_player_score)
@@ -184,11 +185,16 @@ def save_score(hit_percentage, top_list):
             top_list.insert(i-1, your_player_score)
             if len(top_list) >10:
                 top_list.pop()
+                break
+        elif len(top_list) <10 and i == len(top_list):
+            name = input(f"grattis du har placerat dig på topplistan! skriv in ditt namn: ")
+            your_player_score = [hit_percentage, name]
+            top_list.append(your_player_score)
             break
     with open('top_list.txt', 'w') as file:
         for player_score in top_list:
             file.write(f"{player_score[1]},{player_score[0]}\n")
-            break
+           
 
 def read_top_list():
     """ Läs in toppresultat från en fil
