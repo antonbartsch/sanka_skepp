@@ -12,12 +12,16 @@ def main():
         if choice == 1:
             board = Board()
             board.generate_board(HEIGHT, WIDTH)
-            board.generate_ship(2, board)
+            board.generate_ship(5, board)
             board.generate_ship(3, board)
+            board.generate_ship(2, board)
             game_menu(board)
         elif choice == 2:
-            print_rules()
+            top_list = read_top_list()
+            print_top_list(top_list)
         elif choice == 3:
+            print_rules()
+        elif choice == 4:
             print("Avslutar spelet. Tack för att du spelade!")
             input("Tryck på Enter för att avsluta...")
             game_running = False
