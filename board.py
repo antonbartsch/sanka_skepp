@@ -201,7 +201,7 @@ class Board:
         except IndexError:
             pass
 
-    def generate_ship(self, size, board):
+    def generate_ship(self, size,):
         """ generera ett skepp baserat på storlek
 
         Argument:
@@ -214,8 +214,8 @@ class Board:
         try_count = 0
         while not ship_checked:
             try_count += 1
-            start_x = random.randint(0, len(board.squares[0])-1) #-1 för att index börjar på 0
-            start_y = random.randint(0, len(board.squares)-1)
+            start_x = random.randint(0, len(self.squares[0])-1) #-1 för att index börjar på 0
+            start_y = random.randint(0, len(self.squares)-1)
             rotation = random.choice(['H', 'V'])
             for i in range(size+1):#+1 för att bryta loopen ibörjan av varvet efter sista rutan
                 if i == size:
@@ -223,13 +223,13 @@ class Board:
                     break
                 if rotation == 'H':
                     try:
-                        if board[(start_y, start_x + i)].ship or board[(start_y, start_x + i)].blocked:
+                        if self[(start_y, start_x + i)].ship or self[(start_y, start_x + i)].blocked:
                             break
                     except IndexError:
                         break
                 elif rotation == 'V':
                     try:
-                        if board[(start_y + i, start_x)].ship or board[(start_y + i, start_x)].blocked:
+                        if self[(start_y + i, start_x)].ship or self[(start_y + i, start_x)].blocked:
                             break
                     except IndexError:
                         break
@@ -237,19 +237,19 @@ class Board:
         ship = Ship()
         for i in range(size):
             if rotation == 'H':
-                board[(start_y, start_x + i)].ship = True
+                self[(start_y, start_x + i)].ship = True
                 ship.ship_squares.append((start_y, start_x + i))
-                board.safe_block((start_y - 1, start_x + i), ship)
-                board.safe_block((start_y + 1, start_x + i), ship)
-                board.safe_block((start_y, start_x + i - 1), ship)
-                board.safe_block((start_y, start_x + i + 1), ship)
+                self.safe_block((start_y - 1, start_x + i), ship)
+                self.safe_block((start_y + 1, start_x + i), ship)
+                self.safe_block((start_y, start_x + i - 1), ship)
+                self.safe_block((start_y, start_x + i + 1), ship)
             elif rotation == 'V':
-                board[(start_y + i, start_x)].ship = True
+                self[(start_y + i, start_x)].ship = True
                 ship.ship_squares.append((start_y + i, start_x))
-                board.safe_block((start_y + i, start_x - 1), ship)
-                board.safe_block((start_y + i, start_x + 1), ship)
-                board.safe_block((start_y + i - 1, start_x), ship)
-                board.safe_block((start_y + i + 1, start_x), ship)
+                self.safe_block((start_y + i, start_x - 1), ship)
+                self.safe_block((start_y + i, start_x + 1), ship)
+                self.safe_block((start_y + i - 1, start_x), ship)
+                self.safe_block((start_y + i + 1, start_x), ship)
         self.ships.append(ship)
         
 
