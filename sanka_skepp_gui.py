@@ -12,36 +12,8 @@ class start_menu(Frame):
         Frame.__init__(self, master)
         self.pack()
         self.generate_menu()
-
-    def generate_menu(self):
-        """skapa startmenyn till gui spelet"""
-        self.title = Label(self, text="Välkommen till Sänka Skepp")
-        self.title.pack()
-
-        self.new_game_button = create_button("Starta nytt spel", self.start_new_game)
-        self.new_game_button.pack()
-
-        self.top_list_button = create_button("Topplista", self.show_top_list)
-        self.top_list_button.pack()
-
-        self.rules_button = create_button("Regler", self.show_rules)
-        self.rules_button.pack()
-
-        self.quit_button = create_button("Avsluta", self.quit_game)
-        self.quit_button.pack()
-
-    def start_new_game(self):
         
-        gui_board = Gui_board(master=self.master)
-        gui_board.create_board(6,7)
-        gui_board.generate_ship(5)
-    def show_top_list(self):
-        top_list = read_top_list()
-        messagebox.showinfo("Toplista", format_top_list(top_list))
-    def show_rules(self):
-        pass  #todo: implementera visa regler funktionalitet
-    def quit_game(self):
-        self.master.destroy()
+       #self.master.destroy()
 
 class Gui_board(Frame,Board):
     """Hantera gui versionen av spelbrädets utseende och funktionalitet
@@ -65,6 +37,34 @@ class Gui_board(Frame,Board):
             return Frame.__getitem__(self, key)
 
     
+    def generate_menu(self, HEIGHT):
+        """skapa startmenyn till gui spelet"""
+
+        self.new_game_button = create_button("Restart Game", self.start_new_game)
+        self.new_game_button.grid(row=(HEIGHT+1), column=0)
+
+        self.top_list_button = create_button("Topplista", self.show_top_list)
+        self.top_list_button.grid(row=(HEIGHT+1), column=1)
+
+        self.rules_button = create_button("Regler", self.show_rules)
+        self.rules_button.grid(row=(HEIGHT+1), column=2)
+
+        self.quit_button = create_button("Avsluta", self.quit_game)
+        self.quit_button.grid(row=(HEIGHT+1), column=3)
+
+    def start_new_game(self):
+        
+        gui_board = Gui_board(master=self.master)
+        gui_board.create_board(6,7)
+        gui_board.generate_ship(5)
+    def show_top_list(self):
+        top_list = read_top_list()
+        messagebox.showinfo("Toplista", format_top_list(top_list))
+    def show_rules(self):
+        pass  #todo: implementera visa regler funktionalitet
+    def quit_game(self):
+        self.master.destroy()
+
     def create_board(self, HEIGHT, WIDTH):
         """Skapar spelbrädet i gui fönstret lik generate_board men med knappar
 
@@ -158,13 +158,15 @@ def create_button(text, command):
 def main():
     """Huvudfunktion för gui applikationen"""
     root = Tk()
-    #board = Gui_board(master=root)
-    #root.board = board
-    #board.create_board(6,7)
-    #board.generate_ship(5)
-    #board.generate_ship(3)
-    #board.generate_ship(2)
-    root.app = start_menu(master=root)
+    board = Gui_board(master=root)
+    root.board = board
+    board.create_board(6,7)
+    board.generate_menu(6)
+    board.generate_ship(5)
+    board.generate_ship(3)
+    board.generate_ship(2)
+    board.hide_ships()
+    #root.app = start_menu(master=root)
     root.mainloop()
 
 if __name__ == "__main__":
