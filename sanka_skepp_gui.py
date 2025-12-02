@@ -36,7 +36,6 @@ class Gui_board(Frame,Board):
         Argument:
             HEIGHT (int): höjden på spelbrädet för att placera knapparna rätt
         """
-
         self.new_game_button = create_button("Restart Game", self.start_new_game, (HEIGHT+1, 0))
         self.top_list_button = create_button("Topplista", self.show_top_list, (HEIGHT+2, 0))
         self.rules_button = create_button("Växla synliga skepp", self.toggle_hidden_ships, (HEIGHT+3, 0))
@@ -91,8 +90,6 @@ class Gui_board(Frame,Board):
             for square in row:
                 square.update_button()
         
-
-
 class Button_square(Button, Square):
     """Hanterar gui versionen av varje ruta på spelbrädet
     Ärver från Button och Square klasserna
@@ -129,6 +126,50 @@ class Button_square(Button, Square):
             self.config(bg='darkblue')  #träff på tomm ruta
         else:
             self.config(bg='lightblue') #obeskjuten tom ruta
+
+class Victory_popup(Toplevel):
+    """Hantera popup fönstret för vinnst"""
+    def __init__(self, master=None, hit_percentage=0):
+        """initierar Highscore_popup"""
+        Toplevel.__init__(self, master=master)
+        generate_widgets(self)
+        self.hit_percentage = hit_percentage
+    
+    def generate_widgets(self):
+        """Skapa widgets i popup fönstret"""
+        self.title("Grattis! Du vann!")
+        self.label = Label(self, text=f"Du sänkte alla skepp med en träffsäkerhet på {self.hit_percentage}%!")
+        if self.compare_score() and self.compare_score() <=10:
+            self.name_label = Label(self, text=f"Du kom på plats {self.compare_score()} topplistan! Skriv in ditt namn:")
+            self.name_entry = Entry(self)
+            self.submit_button = Button(self, text="Skicka", command=self.submit_name)
+            self.name_label.pack()
+            self.name_entry.pack()
+            self.submit_button.pack()
+    
+    def compare_score(self):
+        """Jämför spelarens poäng med topplistan och hanterar inmatning av namn om nödvändigt
+        
+        Returnerar:
+            placering (int): spelarens placering på topplistan, eller None om inte placerad
+        """
+
+        top_list =read_top_list()
+        if len(top_list) == 0:
+            return 1
+        else:
+            i=0
+            for player_score in top_list:
+                i+=1
+                if self.hit_percentage > player_score[0]:
+                    return i
+            if len(top_list) <10:
+                return i+1
+        return None
+    
+    def submit_name(self):
+        """Hantera inmatning av namn och spara poängen"""
+        name = self.name_entry.get()
 
 def format_top_list(top_list):
     """Formatera topplistan så att den kan skrivas ut i en messagebox
