@@ -4,16 +4,9 @@ from tkinter import messagebox
 from game_functions import *
 from board import *
 
-class start_menu(Frame):
-    """Hantera gui versionen av startmenyn"""
-
-    def __init__(self, master=None):
-        """Initierar ett start_menu objekt"""
-        Frame.__init__(self, master)
-        self.pack()
-        self.generate_menu()
-        
-       #self.master.destroy()
+HEIGHT = 6
+WIDTH = 7
+SHIPS = [5, 3, 2]
 
 class Gui_board(Frame,Board):
     """Hantera gui versionen av spelbrädets utseende och funktionalitet
@@ -38,31 +31,39 @@ class Gui_board(Frame,Board):
 
     
     def generate_menu(self, HEIGHT):
-        """skapa startmenyn till gui spelet"""
+        """skapa menyknapparna till spelet
+        
+        Argument:
+            HEIGHT (int): höjden på spelbrädet för att placera knapparna rätt
+        """
 
-        self.new_game_button = create_button("Restart Game", self.start_new_game)
-        self.new_game_button.grid(row=(HEIGHT+1), column=0)
-
-        self.top_list_button = create_button("Topplista", self.show_top_list)
-        self.top_list_button.grid(row=(HEIGHT+1), column=1)
-
-        self.rules_button = create_button("Regler", self.show_rules)
-        self.rules_button.grid(row=(HEIGHT+1), column=2)
-
-        self.quit_button = create_button("Avsluta", self.quit_game)
-        self.quit_button.grid(row=(HEIGHT+1), column=3)
+        self.new_game_button = create_button("Restart Game", self.start_new_game, (HEIGHT+1, 0))
+        self.top_list_button = create_button("Topplista", self.show_top_list, (HEIGHT+2, 0))
+        self.rules_button = create_button("Växla synliga skepp", self.toggle_hidden_ships, (HEIGHT+3, 0))
+        self.quit_button = create_button("Avsluta", self.quit_game, (HEIGHT+4, 0))
 
     def start_new_game(self):
-        
-        gui_board = Gui_board(master=self.master)
-        gui_board.create_board(6,7)
-        gui_board.generate_ship(5)
+        """starta ett nytt spel genom att återställa brädet och skapa nya skepp"""
+        self.clear_board()
+        for ship_size in SHIPS:
+            self.generate_ship(ship_size)
+        self.hide_ships()
+        self.update_board()
+
     def show_top_list(self):
+        """Visa topplistan i en messagebox"""
         top_list = read_top_list()
         messagebox.showinfo("Toplista", format_top_list(top_list))
-    def show_rules(self):
-        pass  #todo: implementera visa regler funktionalitet
+
+    def toggle_hidden_ships(self):
+        """växla mellan att visa och dölja skeppen på brädet"""
+        for row in self.squares:
+            for square in row:
+                square.hidden = not square.hidden
+        self.update_board()
+
     def quit_game(self):
+        """Avsluta spelet och stäng fönstret"""
         self.master.destroy()
 
     def create_board(self, HEIGHT, WIDTH):
@@ -143,16 +144,19 @@ def format_top_list(top_list):
         formated_list += f"{player_score[1]}: {player_score[0]}%\n"
     return formated_list
             
-def create_button(text, command):
+def create_button(text, command, grid_pos=None):
     """Skapa knappar snabbt
 
     Argument:
         text (str): texten på knappen
         command (function): funktion som körs när knappen trycks
+        grid_pos (tuple): positionen i grid layouten (row, column)
     Returnerar:
         button (Button): den skapade knappen
     """
     button = Button(text=text, command=command)
+    if grid_pos:
+        button.grid(row=grid_pos[0], column=grid_pos[1])
     return button
 
 def main():
