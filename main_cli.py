@@ -3,6 +3,7 @@ from game_functions import *
 from board import *
 HEIGHT = 6
 WIDTH = 7
+SHIPS = [5, 3, 2]
 
 def main():
     """ Huvudfunktion för konsolapplikationen"""
@@ -11,10 +12,8 @@ def main():
         choice = start_menu()
         if choice == 1:
             board = Board()
-            board.generate_board(HEIGHT, WIDTH)
-            board.generate_ship(5, board)
-            board.generate_ship(3, board)
-            board.generate_ship(2, board)
+            for ship_size in SHIPS:
+                board.generate_ship(ship_size)
             game_menu(board)
         elif choice == 2:
             top_list = read_top_list()
