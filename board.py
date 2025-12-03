@@ -43,6 +43,7 @@ class Board:
         self.squares = []
         self.ships = []
         self.fired_shots = 0
+        self.victory = False
 
     def __getitem__ (self, index):
         """ hämta värdet från angiven ruta på spelplanen
@@ -120,8 +121,8 @@ class Board:
                 square.hidden = False
                 square.blocked = False
                 self.fired_shots = 0
+                self.victory = False
         self.ships = []
-        self.blocked_squares = []
         self.fired_shots = 0
 
     def hide_ships(self):

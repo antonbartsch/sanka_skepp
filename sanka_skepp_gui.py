@@ -24,7 +24,7 @@ class Gui_board(Frame,Board):
         Argument:
             key (str/tuple): tuple hör till Board klassen, str hör till Frame klassen
         """
-        if isinstance(key, tuple):
+        if type(key) == tuple:
             return Board.__getitem__(self, key)
         else:
             return Frame.__getitem__(self, key)
@@ -82,11 +82,12 @@ class Gui_board(Frame,Board):
 
     def update_board(self):
         """Uppdaterar alla knappar på spelbrädet"""
-        hit_percentage, victury = self.analyze_hits()
-        if victury:
-            messagebox.showinfo("Grattis!", "Du har sänkt alla skepp!")
-            #todo: victory
-            Victory_popup(master=self.master, hit_percentage=hit_percentage) #################
+        if not self.victory:
+            hit_percentage, self.victory = self.analyze_hits()
+            if self.victory:
+                messagebox.showinfo("Grattis!", "Du har sänkt alla skepp!")
+                #todo: victory
+                Victory_popup(master=self.master, hit_percentage=hit_percentage) #################
         for row in self.squares:
             for square in row:
                 square.update_button()
