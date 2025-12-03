@@ -118,7 +118,11 @@ class Board:
                 square.ship = False
                 square.hit = False
                 square.hidden = False
+                square.blocked = False
                 self.fired_shots = 0
+        self.ships = []
+        self.blocked_squares = []
+        self.fired_shots = 0
 
     def hide_ships(self):
         """Göm alla skepp"""
@@ -201,7 +205,7 @@ class Board:
         except IndexError:
             pass
 
-    def generate_ship(self, size,):
+    def generate_ship(self, size):
         """ generera ett skepp baserat på storlek
 
         Argument:
