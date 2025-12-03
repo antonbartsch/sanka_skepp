@@ -86,6 +86,7 @@ class Gui_board(Frame,Board):
         if victury:
             messagebox.showinfo("Grattis!", "Du har sänkt alla skepp!")
             #todo: victory
+            Victory_popup(master=self.master, hit_percentage=hit_percentage) #################
         for row in self.squares:
             for square in row:
                 square.update_button()
@@ -132,20 +133,25 @@ class Victory_popup(Toplevel):
     def __init__(self, master=None, hit_percentage=0):
         """initierar Highscore_popup"""
         Toplevel.__init__(self, master=master)
-        generate_widgets(self)
         self.hit_percentage = hit_percentage
+        self.generate_widgets()
     
     def generate_widgets(self):
         """Skapa widgets i popup fönstret"""
         self.title("Grattis! Du vann!")
         self.label = Label(self, text=f"Du sänkte alla skepp med en träffsäkerhet på {self.hit_percentage}%!")
-        if self.compare_score() and self.compare_score() <=10:
-            self.name_label = Label(self, text=f"Du kom på plats {self.compare_score()} topplistan! Skriv in ditt namn:")
+        self.label.pack()
+        self.placement = self.compare_score()
+        if self.placement and self.placement <=10:
+            self.name_label = Label(self, text=f"Du kom på plats {self.placement} topplistan! Skriv in ditt namn:")
             self.name_entry = Entry(self)
-            self.submit_button = Button(self, text="Skicka", command=self.submit_name)
+            self.submit_button = create_button("Skicka", self.submit_name, master=self)
             self.name_label.pack()
             self.name_entry.pack()
             self.submit_button.pack()
+        else:
+            self.ok_button = create_button("OK", self.destroy, master=self)
+            self.ok_button.pack()
     
     def compare_score(self):
         """Jämför spelarens poäng med topplistan och hanterar inmatning av namn om nödvändigt
@@ -153,7 +159,6 @@ class Victory_popup(Toplevel):
         Returnerar:
             placering (int): spelarens placering på topplistan, eller None om inte placerad
         """
-
         top_list =read_top_list()
         if len(top_list) == 0:
             return 1
@@ -170,6 +175,16 @@ class Victory_popup(Toplevel):
     def submit_name(self):
         """Hantera inmatning av namn och spara poängen"""
         name = self.name_entry.get()
+        top_list = read_top_list()
+        your_player_score = [self.hit_percentage, name]
+        top_list.insert(self.placement-1, your_player_score)
+        if len(top_list) >10:
+            top_list.pop()
+        with open('top_list.txt', 'w') as file:
+            for player_score in top_list:
+                file.write(f"{player_score[1]},{player_score[0]}\n")
+        self.destroy()
+
 
 def format_top_list(top_list):
     """Formatera topplistan så att den kan skrivas ut i en messagebox
@@ -185,7 +200,7 @@ def format_top_list(top_list):
         formated_list += f"{player_score[1]}: {player_score[0]}%\n"
     return formated_list
             
-def create_button(text, command, grid_pos=None):
+def create_button(text, command, grid_pos=None, master=None):
     """Skapa knappar snabbt
 
     Argument:
@@ -195,7 +210,7 @@ def create_button(text, command, grid_pos=None):
     Returnerar:
         button (Button): den skapade knappen
     """
-    button = Button(text=text, command=command)
+    button = Button(text=text, command=command, master=master)
     if grid_pos:
         button.grid(row=grid_pos[0], column=grid_pos[1])
     return button
