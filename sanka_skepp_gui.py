@@ -4,8 +4,8 @@ from tkinter import messagebox
 from game_functions import *
 from board import *
 
-HEIGHT = 6
-WIDTH = 7
+HEIGHT = 7
+WIDTH = 6
 SHIPS = [5, 3, 2]
 
 class Gui_board(Frame,Board):
@@ -221,11 +221,10 @@ def main():
     root = Tk()
     board = Gui_board(master=root)
     root.board = board
-    board.create_board(6,7)
-    board.generate_menu(6)
-    board.generate_ship(5)
-    board.generate_ship(3)
-    board.generate_ship(2)
+    board.create_board(HEIGHT, WIDTH)
+    board.generate_menu(HEIGHT)
+    for ship_size in SHIPS:
+        board.generate_ship(ship_size)
     board.hide_ships()
     #root.app = start_menu(master=root)
     root.mainloop()

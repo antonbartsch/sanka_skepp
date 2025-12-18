@@ -12,6 +12,7 @@ def main():
         choice = start_menu()
         if choice == 1:
             board = Board()
+            board.generate_board(HEIGHT, WIDTH)
             for ship_size in SHIPS:
                 board.generate_ship(ship_size)
             game_menu(board)

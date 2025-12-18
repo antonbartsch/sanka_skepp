@@ -8,6 +8,7 @@ class Square:
     ship (bool): True om rutan innehåller ett skepp
     hit (bool): True om rutan har beskjutits
     hidden (bool): True om rutan är dold för spelaren
+    blocked (bool): True om rutan är blockerad för skepp placering
     """
 
     def __init__ (self):
@@ -37,6 +38,7 @@ class Board:
     squares (list): 2D-lista av Square-objekt som representerar spelplanen
     ships (list): lista av skepp på spelplanen
     fired_shots (int): antal beskjutna rutor på spelplanen
+    victory (bool): True om spelet är vunnet
     """
     def __init__ (self):
         """ initiera spelplanen"""
@@ -263,9 +265,8 @@ class Ship:
     """ Representerar ett skepp på spelplanen
 
     Atribut:
-    size (int): Storleken på skeppet
-    rotation (str): Riktningen på skeppet, 'H' för horisontell, 'V' för vertikal
     ship_squares (list): Lista med kordinater för rutorna som skeppet ligger på
+    ship_blocked_squares (list): Lista med kordinater för blockerade rutor
     """
     def __init__(self):
         """ initiera ett tomt skepp"""

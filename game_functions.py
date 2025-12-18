@@ -32,7 +32,7 @@ def coordinate_input():
     Argument:
         input (str): användarens inmatning i formatet "x,y"
     returns:
-        matrix_position (tuple): positionen som matrisindex (rad, kolumn)
+        (tuple): positionen som index (rad, kolumn)
     """
     while True:
         try:
@@ -46,7 +46,6 @@ def coordinate_input():
             print('Försök igen: ', end='')
 
 def victory(hit_percentage):
-    #todo: skapa victory funktion
     print(f"Grattis! Du har vunnit spelet! träffprocent: {hit_percentage}%")
     top_list = read_top_list()
     save_score(hit_percentage, top_list)
@@ -142,6 +141,7 @@ def shoot(board):
             else:
                 print("Miss!")
             print(f"träffsäkerhet: {hit_percentage}%")
+            print(board)
         else:
             print("Ogiltig inmatning, rutan är redan träffad eller utanför spelplanen")
         print("Vill du skjuta igen? (j/n):")
@@ -210,6 +210,8 @@ def read_top_list():
                 top_list.append([float(score), name])
     except FileNotFoundError:
         print("top_list.txt hittades inte")# för felsökning
+    except ValueError:
+        print("Fel vid läsning av topplista")# för felsökning
     return top_list
 
 def print_top_list(top_list):
